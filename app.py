@@ -208,10 +208,45 @@ with tab1:
         active_hrs = row['active_hours']
         idle_hrs = row['idle_hours']
 
-        # ── ROW 1: Shift Timeline (left) + Earnings Summary (right) ──
-        col_timeline, col_earnings = st.columns([1.2, 1])
+        # ── ROW 1: Earnings Summary (left) + Shift Timeline (right) ──
+        col_earnings, col_timeline = st.columns([1, 1.2])
 
-        # ── LEFT: Shift Timeline ──
+        # ── LEFT: Earnings Summary ──
+        with col_earnings:
+            st.subheader("Earnings Summary")
+
+            # Status banner
+            if status == 'on_track':
+                st.markdown('<div class="on-track"><h2 style="color:#16a34a;margin:0">ON TRACK</h2></div>', unsafe_allow_html=True)
+            elif status == 'at_risk':
+                st.markdown('<div class="at-risk"><h2 style="color:#dc2626;margin:0">AT RISK</h2></div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div class="cold-start"><h2 style="color:#d97706;margin:0">WARMING UP</h2><p style="margin:4px 0 0;color:#92400e;font-size:14px">Forecast based on historical average (first 30 min)</p></div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Key metrics
+            st.metric("Earned Today", f"₹{earned:,.0f}", f"Goal: ₹{target:,.0f}")
+
+            delta_vel = current_vel - target_vel
+            st.metric("Current Velocity", f"₹{current_vel:,.0f}/hr",
+                      f"{'ahead' if delta_vel >= 0 else 'behind'} by ₹{abs(delta_vel):,.0f}/hr",
+                      delta_color="normal" if delta_vel >= 0 else "inverse")
+
+            st.metric("Projected Earnings", f"₹{projected:,.0f}",
+                      f"Target: ₹{target:,.0f}")
+
+            # Progress bar
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("**Progress to Goal**")
+            progress = min(1.0, earned / target) if target > 0 else 0.0
+            st.progress(progress)
+            st.caption(f"₹{earned:,.0f} of ₹{target:,.0f} ({progress*100:.1f}%)")
+
+            if is_cold_start:
+                st.info("Forecast is estimated from your historical average. Live velocity will kick in after 30 minutes of driving.")
+
+        # ── RIGHT: Shift Timeline ──
         with col_timeline:
             st.subheader("Shift Timeline")
 
@@ -277,41 +312,6 @@ with tab1:
                 st.markdown(timeline_html, unsafe_allow_html=True)
             else:
                 st.info("No timeline available - no trip records found.")
-
-        # ── RIGHT: Earnings Summary ──
-        with col_earnings:
-            st.subheader("Earnings Summary")
-
-            # Status banner
-            if status == 'on_track':
-                st.markdown('<div class="on-track"><h2 style="color:#16a34a;margin:0">ON TRACK</h2></div>', unsafe_allow_html=True)
-            elif status == 'at_risk':
-                st.markdown('<div class="at-risk"><h2 style="color:#dc2626;margin:0">AT RISK</h2></div>', unsafe_allow_html=True)
-            else:
-                st.markdown('<div class="cold-start"><h2 style="color:#d97706;margin:0">WARMING UP</h2><p style="margin:4px 0 0;color:#92400e;font-size:14px">Forecast based on historical average (first 30 min)</p></div>', unsafe_allow_html=True)
-
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            # Key metrics
-            st.metric("Earned Today", f"₹{earned:,.0f}", f"Goal: ₹{target:,.0f}")
-
-            delta_vel = current_vel - target_vel
-            st.metric("Current Velocity", f"₹{current_vel:,.0f}/hr",
-                      f"{'ahead' if delta_vel >= 0 else 'behind'} by ₹{abs(delta_vel):,.0f}/hr",
-                      delta_color="normal" if delta_vel >= 0 else "inverse")
-
-            st.metric("Projected Earnings", f"₹{projected:,.0f}",
-                      f"Target: ₹{target:,.0f}")
-
-            # Progress bar
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("**Progress to Goal**")
-            progress = min(1.0, earned / target) if target > 0 else 0.0
-            st.progress(progress)
-            st.caption(f"₹{earned:,.0f} of ₹{target:,.0f} ({progress*100:.1f}%)")
-
-            if is_cold_start:
-                st.info("Forecast is estimated from your historical average. Live velocity will kick in after 30 minutes of driving.")
 
         # ── ROW 2: Secondary Analytics ──
         st.divider()
