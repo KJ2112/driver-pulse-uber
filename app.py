@@ -316,22 +316,10 @@ with tab1:
         # ── ROW 2: Secondary Analytics ──
         st.divider()
 
-        col_time, col_vel = st.columns(2)
-
-        # ── LEFT: Time Breakdown ──
-        with col_time:
-            st.markdown("**Time Breakdown**")
-            st.markdown(f"Active driving: **{active_hrs:.1f} hrs**")
-            st.markdown(f"Idle waiting: **{idle_hrs:.1f} hrs**")
-
-        # ── RIGHT: Velocity Comparison ──
-        with col_vel:
-            st.markdown("**Velocity Comparison**")
-            vel_data = pd.DataFrame({
-                'Type': ['Current', 'Required'],
-                'Velocity (Rs/hr)': [current_vel, target_vel]
-            })
-            st.bar_chart(vel_data.set_index('Type'))
+        # ── Time Breakdown ──
+        st.markdown("**Time Breakdown**")
+        st.markdown(f"Active driving: **{active_hrs:.1f} hrs**")
+        st.markdown(f"Idle waiting: **{idle_hrs:.1f} hrs**")
 
 
 # ══════════════════════════════
@@ -391,8 +379,21 @@ with tab2:
         st.divider()
         st.subheader("All Trips Overview")
         display_cols = ['trip_id', 'fare', 'duration_min', 'distance_km',
-                        'flagged_moments_count', 'max_severity', 'stress_score', 'trip_quality_rating']
-        st.dataframe(driver_trips[display_cols].reset_index(drop=True), use_container_width=True)
+                        'flagged_moments_count', 'max_severity', 'trip_quality_rating']
+        rename_map = {
+            'trip_id': 'TRIP',
+            'fare': 'FARE (₹)',
+            'duration_min': 'DURATION (min)',
+            'distance_km': 'DISTANCE (km)',
+            'flagged_moments_count': 'FLAGS',
+            'max_severity': 'MAX SEVERITY',
+            'stress_score': 'STRESS SCORE',
+            'trip_quality_rating': 'QUALITY'
+        }
+        st.dataframe(
+            driver_trips[display_cols].rename(columns=rename_map).reset_index(drop=True),
+            use_container_width=True
+        )
 
 # ══════════════════════════════
 # TAB 3 — SETTINGS
