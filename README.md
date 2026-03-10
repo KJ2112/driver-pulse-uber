@@ -60,6 +60,9 @@ driver_pulse/
 │   ├── trip_summaries.csv
 │   └── earnings_status.csv
 ├── app.py                     # Streamlit dashboard
+├── Driver Pulse - Progress Log.pdf
+├── Driver Pulse-Design Doc.pdf
+├── System Architecture.png
 ├── main.py                    # Pipeline runner
 └── requirements.txt
 ```
