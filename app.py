@@ -378,11 +378,20 @@ with tab1:
         target_hours = st.session_state['target_hours']
 
         earned = row['total_earnings']
-        projected = row['projected_earnings']
-        current_vel = row['current_velocity']
-        target_vel = row['target_velocity']
         active_hrs = row['active_hours']
         idle_hrs = row['idle_hours']
+        current_vel = row['current_velocity']
+        
+        target_vel = target / target_hours if target_hours > 0 else 0.0
+        remaining_hours = max(0.0, target_hours - (active_hrs + idle_hrs))
+        projected = earned + (current_vel * remaining_hours)
+        
+        if is_cold_start:
+            status = 'cold_start'
+        elif projected >= target:
+            status = 'on_track'
+        else:
+            status = 'at_risk'
 
         # ── ROW 1: Earnings Summary (left) + Shift Timeline (right) ──
         col_earnings, col_timeline = st.columns([1, 1.2])
@@ -584,8 +593,8 @@ with tab3:
         current_target = st.session_state['target_earnings']
         
         import datetime
-        default_start = datetime.time(9, 0)
-        default_end = datetime.time(17, 0)
+        default_start = st.session_state.get('target_start_time', datetime.time(9, 0))
+        default_end = st.session_state.get('target_end_time', datetime.time(17, 0))
         
         with st.form("settings_form"):
             new_target = st.number_input("Target Earnings (₹)", min_value=100.0, max_value=10000.0, value=float(current_target), step=100.0)
@@ -613,3 +622,4 @@ with tab3:
                 st.session_state['target_hours'] = new_hours
                 
                 st.success(f"Settings successfully updated! Your new target is ₹{new_target:,.0f} for {new_hours:.1f} hours.")
+                st.rerun()
