@@ -1,8 +1,8 @@
 # Driver Pulse: Team[ARK Hackers]
 ### Uber Hackathon Submission
-##Demo Video: 
-##Live Application:
-##Judge Login Credential:
+**Demo Video:**  
+**Live Application:**  
+**Judge Login Credentials:**
 
 Driver Pulse gives drivers two things they currently don't have: a clear record of stressful or conflict moments during their trips, and a live earnings tracker that tells them whether they are on pace to hit their daily goal.
 
