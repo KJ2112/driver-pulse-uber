@@ -66,17 +66,24 @@ driver_pulse/
 
 ## How To Run
 
-**1. Install dependencies**
+**1. Create and activate a virtual environment (Recommended)**
 ```bash
-pip install pandas numpy streamlit
+python -m venv .venv
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 ```
 
-**2. Run the pipeline** (generates output CSVs)
+**2. Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+*(Alternatively, you can install directly: `pip install pandas numpy streamlit`)*
+
+**3. Run the pipeline** (generates output CSVs)
 ```bash
 python main.py
 ```
 
-**3. Launch the dashboard**
+**4. Launch the dashboard**
 ```bash
 streamlit run app.py
 ```
@@ -86,6 +93,9 @@ Opens at `http://localhost:8501`
 ---
 
 ## Dashboard
+
+**Dashboard Login**
+When you open the dashboard, you will be prompted to enter a **Driver ID**. You can enter an existing ID from the dataset (e.g., `DRV001`) to log in and view the driver metrics.
 
 **Tab 1 — Earnings Tracker**
 Shows ON TRACK or AT RISK status, current vs required velocity, progress bar toward daily goal, and a breakdown of active vs idle time.

@@ -109,20 +109,196 @@ if url_driver and url_driver in all_drivers and not st.session_state['logged_in'
     st.session_state['driver_id'] = url_driver
 
 if not st.session_state['logged_in']:
-    st.title("Driver Pulse - Login")
-    st.markdown("Please enter your Driver ID to access your dashboard.")
-    
-    with st.form("login_form"):
-        driver_id_input = st.text_input("Driver ID", placeholder="e.g. DRV001")
-        submit_button = st.form_submit_button("Login")
-        
-        if submit_button:
-            if driver_id_input in all_drivers:
-                st.session_state['logged_in'] = True
-                st.session_state['driver_id'] = driver_id_input
-                st.rerun()
-            else:
-                st.error("Invalid Driver ID. Please check and try again.")
+
+    st.markdown("""
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+      html, body,
+      [data-testid="stAppViewContainer"],
+      [data-testid="stAppViewContainer"] > .main {
+        background-color: #0a0a0a !important;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+      }
+      [data-testid="stHeader"] { background-color: #0a0a0a !important; border: none !important; }
+      section[data-testid="stSidebar"] { display: none !important; }
+      #MainMenu, footer { visibility: hidden; }
+
+      [data-testid="stAppViewContainer"] > .main > .block-container {
+        padding: 60px 0 40px 0 !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        box-sizing: border-box !important;
+      }
+
+      /* ─── Logo ─── */
+      .login-logo {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .login-logo-text {
+        font-size: 74px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -5px;
+        line-height: 1;
+        display: block;
+      }
+      .login-logo-sub {
+        font-size: 11px;
+        font-weight: 500;
+        color: #3a3a3a;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        margin-top: 10px;
+        display: block;
+      }
+
+      /* ─── Card: style the center column's inner block ─── */
+      div[data-testid="column"]:nth-child(2) > div:first-child {
+        background: #141414 !important;
+        border: 1px solid #222 !important;
+        border-radius: 22px !important;
+        padding: 44px 48px 40px 48px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 24px 64px rgba(0,0,0,0.75) !important;
+      }
+
+      .card-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.8px;
+        line-height: 1.2;
+      }
+      .card-subtitle {
+        font-size: 14px;
+        color: #444;
+        margin: 0 0 34px 0;
+        line-height: 1.5;
+      }
+      .field-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #444;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      /* ─── Form ─── */
+      [data-testid="stForm"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+      [data-testid="stForm"] .stTextInput label { display: none !important; }
+
+      [data-testid="stForm"] .stTextInput > div > div {
+        background: #1a1a1a !important;
+        border: 1.5px solid #282828 !important;
+        border-radius: 14px !important;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      [data-testid="stForm"] .stTextInput > div > div:focus-within {
+        border-color: #fff !important;
+        box-shadow: 0 0 0 4px rgba(255,255,255,0.05) !important;
+      }
+      [data-testid="stForm"] .stTextInput input {
+        background: transparent !important;
+        border: none !important;
+        font-size: 15px !important;
+        font-family: 'Inter', sans-serif !important;
+        color: #ffffff !important;
+        padding: 16px 18px !important;
+        box-shadow: none !important;
+        caret-color: #fff;
+      }
+      [data-testid="stForm"] .stTextInput input::placeholder { color: #333 !important; }
+
+      [data-testid="stForm"] .stFormSubmitButton button {
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #000 !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 17px 0 !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        font-family: 'Inter', sans-serif !important;
+        margin-top: 16px !important;
+        transition: background 0.15s, transform 0.12s, box-shadow 0.15s !important;
+      }
+      [data-testid="stForm"] .stFormSubmitButton button:hover {
+        background: #e8e8e8 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 8px 28px rgba(255,255,255,0.09) !important;
+      }
+      [data-testid="stForm"] .stFormSubmitButton button:active {
+        transform: translateY(0) !important;
+        background: #d0d0d0 !important;
+      }
+
+      [data-testid="stForm"] [data-testid="stAlert"] {
+        background: rgba(255,50,50,0.07) !important;
+        border: 1px solid rgba(255,50,50,0.18) !important;
+        border-radius: 12px !important;
+        margin-top: 12px !important;
+      }
+
+      .login-footer {
+        font-size: 12px;
+        color: #2a2a2a;
+        text-align: center;
+        margin-top: 28px;
+        font-family: 'Inter', sans-serif;
+      }
+
+      [data-testid="column"] { padding: 0 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ── Uber logo centred above the card ──
+    st.markdown("""
+    <div class="login-logo">
+      <span class="login-logo-text">Uber</span>
+      <span class="login-logo-sub">Driver Pulse</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Card: everything inside ONE centre column ──
+    _, card, _ = st.columns([1.1, 1, 1.1])
+    with card:
+        st.markdown("""
+        <div class="card-title">Welcome back</div>
+        <div class="card-subtitle">Sign in with your Driver ID to continue</div>
+        <span class="field-label">Driver ID</span>
+        """, unsafe_allow_html=True)
+
+        with st.form("login_form"):
+            driver_id_input = st.text_input(
+                "Driver ID", placeholder="e.g. DRV001",
+                label_visibility="collapsed"
+            )
+            submit_button = st.form_submit_button("Continue →")
+            if submit_button:
+                if driver_id_input in all_drivers:
+                    st.session_state['logged_in'] = True
+                    st.session_state['driver_id'] = driver_id_input
+                    st.rerun()
+                else:
+                    st.error("Invalid Driver ID. Please check and try again.")
+
+    # ── Footer ──
+    st.markdown('<div class="login-footer">© 2025 Uber Technologies, Inc.</div>', unsafe_allow_html=True)
+
     st.stop()
     
 # ── sidebar ──
@@ -379,7 +555,7 @@ with tab2:
         st.divider()
         st.subheader("All Trips Overview")
         display_cols = ['trip_id', 'fare', 'duration_min', 'distance_km',
-                        'flagged_moments_count', 'max_severity', 'trip_quality_rating']
+                        'flagged_moments_count', 'max_severity', 'stress_score', 'trip_quality_rating']
         rename_map = {
             'trip_id': 'TRIP',
             'fare': 'FARE (₹)',
